@@ -24,13 +24,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Libraries Stylesheet -->
- <link href="lib/animate/animate.min.css" rel="stylesheet">
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet"> 
+ <link href="{%static 'lib/animate/animate.min.css' %}" rel="stylesheet">
+    {% comment %} <link href="{%static 'lib/owlcarousel/owl.carousel.min.js' %}" rel="stylesheet">  {% endcomment %}
     {% comment %} {% load static %}
 <link href="{% static 'lib/animate/animate.min.css' %}" rel="stylesheet">
 <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet"> {% endcomment %}
-
-    
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
@@ -82,7 +80,7 @@
     <div class="container-fluid p-0 mb-5">
         <div class="owl-carousel header-carousel position-relative">
             <div class="owl-carousel-item position-relative">
-                <img class="img-fluid" src="{% static "img/carousel-1.jpg" %}" alt="">
+                <img class="img-fluid" src="{% static 'img/carousel-1.jpg' %}" alt="">
                 <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .7);">
                     <div class="container">
                         <div class="row justify-content-start">
