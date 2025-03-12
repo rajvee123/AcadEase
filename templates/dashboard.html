@@ -1,0 +1,246 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Education Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}"
+          >Education Portal</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="{{ url_for('dashboard') }}"
+                >Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('view_materials') }}"
+                >Study Materials</a
+              >
+            </li>
+            {% if user.role == 'student' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('my_results') }}"
+                >My Results</a
+              >
+            </li>
+            {% endif %} {% if user.role == 'teacher' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('upload_materials') }}"
+                >Upload Materials</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('manage_results') }}"
+                >Manage Results</a
+              >
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('upload_download') }}"
+                >Files</a
+              >
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                {{ user.name }} ({{ user.role|capitalize }})
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('profile') }}"
+                    >Profile</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('logout') }}"
+                    >Logout</a
+                  >
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show">
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card shadow-sm mb-4">
+            <div class="card-body">
+              <h2>Welcome, {{ user.name }}!</h2>
+              <p class="lead">
+                This is your personalized dashboard. You are logged in as a
+                <strong>{{ user.role }}</strong>.
+              </p>
+
+              <div class="row mt-4">
+                {% if user.role == 'student' %}
+                <div class="col-md-4 mb-3">
+                  <div class="card text-white bg-primary">
+                    <div class="card-body text-center">
+                      <i class="bi bi-book fs-1"></i>
+                      <h5 class="card-title mt-2">Study Materials</h5>
+                      <a
+                        href="{{ url_for('view_materials') }}"
+                        class="btn btn-outline-light btn-sm mt-2"
+                        >Access</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <div class="card text-white bg-success">
+                    <div class="card-body text-center">
+                      <i class="bi bi-graph-up fs-1"></i>
+                      <h5 class="card-title mt-2">My Results</h5>
+                      <a
+                        href="{{ url_for('my_results') }}"
+                        class="btn btn-outline-light btn-sm mt-2"
+                        >View</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <div class="card text-white bg-info">
+                    <div class="card-body text-center">
+                      <i class="bi bi-file-earmark-arrow-down fs-1"></i>
+                      <h5 class="card-title mt-2">Files</h5>
+                      <a
+                        href="{{ url_for('upload_download') }}"
+                        class="btn btn-outline-light btn-sm mt-2"
+                        >Access</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                {% else %}
+                <div class="col-md-4 mb-3">
+                  <div class="card text-white bg-primary">
+                    <div class="card-body text-center">
+                      <i class="bi bi-cloud-upload fs-1"></i>
+                      <h5 class="card-title mt-2">Upload Materials</h5>
+                      <a
+                        href="{{ url_for('upload_materials') }}"
+                        class="btn btn-outline-light btn-sm mt-2"
+                        >Upload</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <div class="card text-white bg-success">
+                    <div class="card-body text-center">
+                      <i class="bi bi-clipboard-data fs-1"></i>
+                      <h5 class="card-title mt-2">Manage Results</h5>
+                      <a
+                        href="{{ url_for('manage_results') }}"
+                        class="btn btn-outline-light btn-sm mt-2"
+                        >Manage</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <div class="card text-white bg-info">
+                    <div class="card-body text-center">
+                      <i class="bi bi-file-earmark-arrow-up fs-1"></i>
+                      <h5 class="card-title mt-2">Files</h5>
+                      <a
+                        href="{{ url_for('upload_download') }}"
+                        class="btn btn-outline-light btn-sm mt-2"
+                        >Access</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Quick Info</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle text-white p-3 me-3">
+                  <i class="bi bi-person-fill"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0">{{ user.name }}</h6>
+                  <small class="text-muted">{{ user.email }}</small>
+                </div>
+              </div>
+              <div class="mb-3">
+                <p class="mb-1">
+                  <strong>Role:</strong> {{ user.role|capitalize }}
+                </p>
+                <p class="mb-1">
+                  <strong>Joined:</strong> {{ user.created_at.strftime('%B %d,
+                  %Y') }}
+                </p>
+              </div>
+              <div class="d-grid">
+                <a
+                  href="{{ url_for('profile') }}"
+                  class="btn btn-outline-primary"
+                  >View Profile</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
