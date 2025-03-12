@@ -1,0 +1,20 @@
+<!-- templates/preview_csv.html -->
+{% extends "result/base.html" %} {% block title %}Preview CSV - Result
+Management System{% endblock %} {% block content %}
+<h2>Preview: {{ filename }}</h2>
+
+<div class="my-4">
+  <a href="javascript:history.back()" class="btn btn-secondary"
+    >Back to Results</a
+  >
+  <a
+    href="{{ url_for('download_file', filepath=request.path.split('/preview/')[1]) }}"
+    class="btn btn-success"
+    >Download</a
+  >
+</div>
+
+<div class="table-responsive mt-4">
+  {% for table in tables %} {{ table | safe }} {% endfor %}
+</div>
+{% endblock %}

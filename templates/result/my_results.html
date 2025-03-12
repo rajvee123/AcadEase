@@ -1,0 +1,73 @@
+<!-- templates/student.html -->
+{% extends "result/base.html" %} {% block title %}Student Dashboard - Result
+Management System{% endblock %} {% block content %}
+<h2>Student Dashboard</h2>
+
+<div class="card mb-4">
+  <div class="card-header">Search Results</div>
+  <div class="card-body">
+    <form action="/filter_results" method="post">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="year" class="form-label">Year</label>
+          <select class="form-select" id="year" name="year" required>
+            <option value="">Select Year</option>
+            {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="semester" class="form-label">Semester (Optional)</label>
+          <select class="form-select" id="semester" name="semester">
+            <option value="all">All Semesters</option>
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+            <option value="3">Semester 3</option>
+            <option value="4">Semester 4</option>
+            <option value="5">Semester 5</option>
+            <option value="6">Semester 6</option>
+            <option value="7">Semester 7</option>
+            <option value="8">Semester 8</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="course" class="form-label">Course (Optional)</label>
+          <input
+            type="text"
+            class="form-control"
+            id="course"
+            name="course"
+            placeholder="e.g., Computer Science"
+          />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Available Result Years</div>
+  <div class="card-body">
+    <div class="row">
+      {% if years %} {% for year in years %}
+      <div class="col-md-4 mb-3">
+        <div class="card result-card">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ year }}</h5>
+            <a href="/browse/{{ year }}" class="btn btn-primary"
+              >Browse Results</a
+            >
+          </div>
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <div class="col">
+        <div class="alert alert-info">No results have been uploaded yet.</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

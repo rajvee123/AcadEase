@@ -1,0 +1,65 @@
+<!-- manage_subjects.html -->
+{% extends 'studyMaterial/base.html' %} {% block title %}Manage Subjects - Study
+Material Management System{% endblock %} {% block content %}
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Add New Subject</h4>
+      </div>
+      <div class="card-body">
+        <form method="POST">
+          <div class="mb-3">
+            <label for="name" class="form-label">Subject Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              name="name"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="code" class="form-label">Subject Code</label>
+            <input
+              type="text"
+              class="form-control"
+              id="code"
+              name="code"
+              required
+            />
+            <small class="form-text text-muted"
+              >Must be unique (e.g. CS101, MATH202)</small
+            >
+          </div>
+          <button type="submit" class="btn btn-primary">Add Subject</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Existing Subjects</h4>
+      </div>
+      <div class="card-body">
+        {% if subjects %}
+        <div class="list-group">
+          {% for subject in subjects %}
+          <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">{{ subject.name }}</h5>
+              <small class="text-muted">{{ subject.code }}</small>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">No subjects added yet.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

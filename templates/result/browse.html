@@ -1,0 +1,128 @@
+<!-- templates/browse.html -->
+{% extends "result/base.html" %} {% block title %}Browse Results - {{ year }} -
+Result Management System{% endblock %} {% block content %}
+<h2>Results for Year {{ year }}</h2>
+
+<div class="filter-section">
+  <h5>Filter Results</h5>
+  <form id="filter-form" method="get">
+    {% if semesters %}
+    <div class="mb-3">
+      <label for="semester-filter" class="form-label">Semester</label>
+      <select class="form-select" id="semester-filter">
+        <option value="all">All Semesters</option>
+        {% for semester in semesters %}
+        <option value="{{ semester }}">Semester {{ semester }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %} {% if courses %}
+    <div class="mb-3">
+      <label for="course-filter" class="form-label">Course</label>
+      <select class="form-select" id="course-filter">
+        <option value="all">All Courses</option>
+        {% for course in courses %}
+        <option value="{{ course }}">{{ course }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
+
+    <button type="button" id="apply-filter" class="btn btn-primary">
+      Apply Filter
+    </button>
+    <a href="/browse/{{ year }}" class="btn btn-secondary">Reset Filters</a>
+  </form>
+</div>
+
+<div class="row" id="results-container">
+  {% if results %} {% for result in results %}
+  <div
+    class="col-md-6 mb-4 result-item"
+    data-semester="{{ result.semester or 'none' }}"
+    data-course="{{ result.course or 'none' }}"
+  >
+    <div class="card h-100 result-card">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5 class="mb-0">Result File</h5>
+        <span class="badge bg-primary">{{ result.type|upper }}</span>
+      </div>
+      <div class="card-body">
+        <h6 class="card-title">{{ result.filename }}</h6>
+        <ul class="list-group list-group-flush mb-3">
+          {% if result.semester %}
+          <li class="list-group-item">Semester: {{ result.semester }}</li>
+          {% endif %} {% if result.course %}
+          <li class="list-group-item">Course: {{ result.course }}</li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <a href="/preview/{{ result.path }}" class="btn btn-info">Preview</a>
+        <a href="/download/{{ result.path }}" class="btn btn-success"
+          >Download</a
+        >
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% else %}
+  <div class="col">
+    <div class="alert alert-warning">
+      No result files found for the year {{ year }}.
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="mt-4">
+  <a href="/student" class="btn btn-secondary">Back to Student Dashboard</a>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  document
+    .getElementById("apply-filter")
+    .addEventListener("click", function () {
+      const semesterFilter = document.getElementById("semester-filter").value;
+      const courseFilter = document.getElementById("course-filter").value;
+      const resultItems = document.querySelectorAll(".result-item");
+
+      let noResults = true;
+
+      resultItems.forEach((item) => {
+        let semesterMatch = true;
+        let courseMatch = true;
+
+        if (semesterFilter && semesterFilter !== "all") {
+          semesterMatch = item.dataset.semester === semesterFilter;
+        }
+
+        if (courseFilter && courseFilter !== "all") {
+          courseMatch = item.dataset.course === courseFilter;
+        }
+
+        if (semesterMatch && courseMatch) {
+          item.style.display = "block";
+          noResults = false;
+        } else {
+          item.style.display = "none";
+        }
+      });
+
+      // Show no results message if nothing matches
+      const resultsContainer = document.getElementById("results-container");
+      let noResultsMessage = document.querySelector(".no-results-message");
+
+      if (noResults && !noResultsMessage) {
+        noResultsMessage = document.createElement("div");
+        noResultsMessage.className = "col-12 no-results-message";
+        noResultsMessage.innerHTML =
+          '<div class="alert alert-info">No results match your filter criteria.</div>';
+        resultsContainer.appendChild(noResultsMessage);
+      } else if (!noResults && noResultsMessage) {
+        noResultsMessage.remove();
+      }
+    });
+</script>
+{% endblock %}

@@ -13,6 +13,12 @@ import datetime
 
 app = Flask(__name__)
 
+# STudy material
+
+
+
+
+
 
 
 # store file
@@ -117,7 +123,7 @@ def login():
         
         if not email or not password:
             flash('Email and password are required', 'danger')
-            return render_template('login.html')
+            return render_template('auth/login.html')
         
         user = User.query.filter_by(email=email).first()
         
@@ -143,7 +149,7 @@ def login():
         
         flash('Invalid password', 'danger')
     
-    return render_template('login.html')
+    return render_template('auth/login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -156,21 +162,21 @@ def register():
         
         if not name or not email or not password:
             flash('All fields are required', 'danger')
-            return render_template('register.html')
+            return render_template('auth/register.html')
         
         if password != confirm_password:
             flash('Passwords do not match', 'danger')
-            return render_template('register.html')
+            return render_template('auth/register.html')
         
         if role not in ['student', 'teacher']:
             flash('Invalid role selected', 'danger')
-            return render_template('register.html')
+            return render_template('auth/register.html')
         
         # Check if user already exists
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Email already registered', 'danger')
-            return render_template('register.html')
+            return render_template('auth/register.html')
         
         # Create new user
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
@@ -188,7 +194,7 @@ def register():
         flash('Registration successful! You can now login.', 'success')
         return redirect(url_for('login'))
     
-    return render_template('register.html')
+    return render_template('auth/register.html')
 
 @app.route('/logout')
 def logout():
@@ -291,7 +297,7 @@ def manage_results():
         years = [name for name in os.listdir(app.config['UPLOAD_FOLDER']) 
                 if os.path.isdir(os.path.join(app.config['UPLOAD_FOLDER'], name))]
     
-    return render_template('manage_results.html', years=years)
+    return render_template('result/manage_results.html', years=years)
 
 
 @app.route('/my-results')
@@ -302,7 +308,7 @@ def my_results():
         years = [name for name in os.listdir(app.config['UPLOAD_FOLDER']) 
                 if os.path.isdir(os.path.join(app.config['UPLOAD_FOLDER'], name))]
     
-    return render_template('my_results.html', years=years)
+    return render_template('result/my_results.html', years=years)
 
 
 
@@ -393,7 +399,7 @@ def browse_results(year):
     semesters = sorted(list(set(file['semester'] for file in results if file['semester'])))
     courses = sorted(list(set(file['course'] for file in results if file['course'])))
     
-    return render_template('browse.html', results=results, year=year, semesters=semesters, courses=courses)
+    return render_template('result/browse.html', results=results, year=year, semesters=semesters, courses=courses)
 
 @app.route('/filter_results', methods=['POST'])
 def filter_results():
@@ -431,13 +437,13 @@ def preview_file(filepath):
     
     if file_type == 'pdf':
         file_url = url_for('static', filename=f'results/{filepath}')
-        return render_template('preview_pdf.html', file_url=file_url, filename=filename)
+        return render_template('result/preview_pdf.html', file_url=file_url, filename=filename)
     elif file_type == 'csv':
         try:
             # Read the CSV file
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], directory, filename)
             df = pd.read_csv(file_path)
-            return render_template('preview_csv.html', tables=[df.to_html(classes='data')], titles=df.columns.values, filename=filename)
+            return render_template('result/preview_csv.html', tables=[df.to_html(classes='data')], titles=df.columns.values, filename=filename)
         except Exception as e:
             flash(f'Error previewing CSV: {str(e)}')
             return redirect(url_for('browse_results', year=directory))

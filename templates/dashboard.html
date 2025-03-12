@@ -36,10 +36,11 @@
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('view_materials') }}"
+              <a class="nav-link" href="http://127.0.0.1:2000" target="_blank"
                 >Study Materials</a
               >
             </li>
+
             {% if user.role == 'student' %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('my_results') }}"
@@ -47,11 +48,7 @@
               >
             </li>
             {% endif %} {% if user.role == 'teacher' %}
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('upload_materials') }}"
-                >Upload Materials</a
-              >
-            </li>
+
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('manage_results') }}"
                 >Manage Results</a
@@ -125,7 +122,7 @@
                       <i class="bi bi-book fs-1"></i>
                       <h5 class="card-title mt-2">Study Materials</h5>
                       <a
-                        href="{{ url_for('view_materials') }}"
+                        href="http://127.0.0.1:2000"
                         class="btn btn-outline-light btn-sm mt-2"
                         >Access</a
                       >
@@ -165,7 +162,7 @@
                       <i class="bi bi-cloud-upload fs-1"></i>
                       <h5 class="card-title mt-2">Upload Materials</h5>
                       <a
-                        href="{{ url_for('upload_materials') }}"
+                        href="http://127.0.0.1:2000/upload"
                         class="btn btn-outline-light btn-sm mt-2"
                         >Upload</a
                       >
