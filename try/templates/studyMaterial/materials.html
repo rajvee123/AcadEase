@@ -1,0 +1,96 @@
+{% extends 'studyMaterial/base.html' %}
+
+{% block title %}Browse Materials - Study Material Management System{% endblock %}
+
+{% block content %}
+<h2>Browse Study Materials</h2>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Filter Materials</h5>
+    </div>
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('browse_materials') }}">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="subject" class="form-label">Subject</label>
+                    <select class="form-select" id="subject" name="subject">
+                        <option value="">All Subjects</option>
+                        {% for subject in subjects %}
+                        <option value="{{ subject.id }}" {% if current_subject == subject.id %}selected{% endif %}>
+                            {{ subject.name }} ({{ subject.code }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="semester" class="form-label">Semester</label>
+                    <select class="form-select" id="semester" name="semester">
+                        <option value="">All Semesters</option>
+                        {% for sem in semesters %}
+                        <option value="{{ sem[0] }}" {% if current_semester == sem[0] %}selected{% endif %}>
+                            {{ sem[0] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="type" class="form-label">Material Type</label>
+                    <select class="form-select" id="type" name="type">
+                        <option value="">All Types</option>
+                        {% for type in file_types %}
+                        <option value="{{ type[0] }}" {% if current_type == type[0] %}selected{% endif %}>
+                            {{ type[0] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a href="{{ url_for('browse_materials') }}" class="btn btn-outline-secondary">Clear Filters</a>
+        </form>
+    </div>
+</div>
+
+{% if materials %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Subject</th>
+                <th>Semester</th>
+                <th>Type</th>
+                <th>Upload Date</th>
+                <th>Uploader</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for material in materials %}
+            <tr>
+                <td>{{ material.title }}</td>
+                <td>{{ material.subject.name }}</td>
+                <td>{{ material.semester }}</td>
+                <td><span class="badge bg-info">{{ material.file_type }}</span></td>
+                <td>{{ material.upload_date.strftime('%d %b %Y') }}</td>
+                <td>{{ material.uploader.username }}</td>
+                <td>
+                    <a href="{{ url_for('download_material', material_id=material.id) }}" class="btn btn-sm btn-success">Download</a>
+                    {% if current_user.is_authenticated and (current_user.id == material.user_id or current_user.is_teacher) %}
+                    <form method="POST" action="{{ url_for('delete_material', material_id=material.id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this material?')">Delete</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    No materials found matching your criteria. Try adjusting your filters or <a href="{{ url_for('upload_material') }}">upload a new material</a>.
+</div>
+{% endif %}
+{% endblock %}
