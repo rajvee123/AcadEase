@@ -1,0 +1,87 @@
+{% extends 'Events/base.html' %} {% block title %}Upload Event{% endblock %} {%
+block content %}
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">Upload New Event</h2>
+      </div>
+      <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="title" class="form-label">Event Title*</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              name="title"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label"
+              >Event Description*</label
+            >
+            <textarea
+              class="form-control"
+              id="description"
+              name="description"
+              rows="5"
+              required
+            ></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="image" class="form-label">Event Image</label>
+            <input
+              type="file"
+              class="form-control"
+              id="image"
+              name="image"
+              accept="image/*"
+            />
+            <div class="form-text">
+              Supported formats: JPG, PNG, GIF (Max 16MB)
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="event_date" class="form-label">Event Date*</label>
+              <input
+                type="date"
+                class="form-control"
+                id="event_date"
+                name="event_date"
+                required
+              />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="event_time" class="form-label">Event Time*</label>
+              <input
+                type="time"
+                class="form-control"
+                id="event_time"
+                name="event_time"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">Upload Event</button>
+            <a
+              href="{{ url_for('events_home') }}"
+              class="btn btn-secondary ms-2"
+            >
+              Cancel</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
