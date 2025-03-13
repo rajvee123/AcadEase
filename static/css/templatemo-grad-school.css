@@ -1,24 +1,4 @@
-/*
-    
-TemplateMo 557 Grad School
-
-https://templatemo.com/tm-557-grad-school
-
-*/
-
-@import url(fontawesome.css);
-@import url(
-    "<link href="https://fonts.googleapis.com/css?family=Montserrat:100,
-    200,
-    300,
-    400,
-    500,
-    600,
-    700,
-    800,
-    900" rel="stylesheet">"
-  )
-  ; body {
+body {
   font-family: "Montserrat", sans-serif;
 }
 
@@ -561,8 +541,7 @@ section.why-us {
   display: block;
   margin-bottom: 0.75em;
 }
-#tabs ul .ui-tabs-active {
-}
+
 #tabs ul .ui-tabs-active a {
   color: #f5a425;
 }
@@ -830,9 +809,9 @@ section.courses .item .down-content img {
 }
 
 section.courses .item .down-content .text-button-pay {
-  float: right;
-  display: inline-block;
-  margin-top: -30px;
+  float:right;,
+  display: inline-block;,
+  /* margin-top: -30px; */
 }
 
 section.courses .item .down-content .text-button-pay a {
@@ -841,9 +820,9 @@ section.courses .item .down-content .text-button-pay a {
 }
 
 section.courses .item .down-content .text-button-free {
-  float: right;
-  display: inline-block;
-  margin-top: -30px;
+  float: right;,
+  display: inline-block;,
+  /* margin-top: -30px; */
 }
 
 section.courses .item .down-content .text-button-free a {
@@ -1001,7 +980,7 @@ section.video .left-content .main-button {
   z-index: 1043;
   position: fixed;
   outline: none !important;
-  -webkit-backface-visibility: hidden;
+
 }
 
 .mfp-container {
@@ -1114,7 +1093,7 @@ button.mfp-arrow {
   cursor: pointer;
   background: transparent;
   border: 0;
-  -webkit-appearance: none;
+
   display: block;
   outline: none;
   padding: 0;
