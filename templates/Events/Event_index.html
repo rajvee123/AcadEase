@@ -1,0 +1,54 @@
+{% extends 'Events/base.html' %} {% block title %}School Events{% endblock %} {%
+block content %}
+<h1 class="mb-4">Upcoming School Events</h1>
+
+{% if events %}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  {% for event in events %}
+  <div class="col">
+    <div class="card h-100 event-card">
+      {% if event.image_path %}
+      <img
+        src="{{ url_for('static', filename=event.image_path) }}"
+        class="card-img-top"
+        alt="{{ event.title }}"
+      />
+      {% else %}
+      <img
+        src="{{ url_for('static', filename='img/default-event.jpg') }}"
+        class="card-img-top"
+        alt="Default Event Image"
+      />
+      {% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ event.title }}</h5>
+        <p class="card-text text-muted">
+          <small>
+            <i class="bi bi-calendar"></i> {{ event.event_date }}
+            <i class="bi bi-clock ms-2"></i> {{ event.event_time }}
+          </small>
+        </p>
+        <p class="card-text description-preview">
+          {{ event.description[:100] }}{% if event.description|length > 100
+          %}...{% endif %}
+        </p>
+        <a
+          href="{{ url_for('event_detail', event_id=event.id) }}"
+          class="btn btn-primary"
+          >View Details</a
+        >
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+  <p>No events have been added yet.</p>
+  {% if session.get('user_role') == 'teacher' %}
+  <a href="{{ url_for('upload_event') }}" class="btn btn-primary"
+    >Add New Event</a
+  >
+  {% endif %}
+</div>
+{% endif %} {% endblock %}

@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, request, jsonify, make_response, render_template, redirect, url_for, session, flash,send_from_directory
+from flask import Flask, request, jsonify, make_response, render_template, redirect, url_for, session, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
@@ -8,27 +8,23 @@ import datetime
 from functools import wraps
 import os
 import pandas as pd
+import sqlite3
 from werkzeug.utils import secure_filename
 import datetime
 
 app = Flask(__name__)
 
-# STudy material
-
-
-
-
-
-
-
-# store file
-
-
-# Configure upload settings
+# Configure upload settings for results
 UPLOAD_FOLDER = os.path.join('static', 'results')
 ALLOWED_EXTENSIONS = {'pdf', 'csv'}
 
+# Configure upload settings for events
+EVENT_UPLOAD_FOLDER = os.path.join('static', 'uploads_event')
+EVENT_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['EVENT_UPLOAD_FOLDER'] = EVENT_UPLOAD_FOLDER
 
 # Ensure the upload folders exist
 def ensure_dir(directory):
@@ -36,21 +32,40 @@ def ensure_dir(directory):
         os.makedirs(directory)
 
 ensure_dir(app.config['UPLOAD_FOLDER'])
+ensure_dir(app.config['EVENT_UPLOAD_FOLDER'])
 
 # Check if file type is allowed
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-
-# 
-
+def allowed_event_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in EVENT_ALLOWED_EXTENSIONS
 
 app.config['SECRET_KEY'] = 'your_secret_key'  # Change this in production!
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+# Initialize events database
+def init_events_db():
+    if os.path.exists('events.db'):
+        os.remove('events.db')
+    conn = sqlite3.connect('events.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        image_path TEXT,
+        event_date DATE NOT NULL,
+        event_time TIME NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    ''')
+    conn.commit()
+    conn.close()
 
 # Models
 class User(db.Model):
@@ -226,18 +241,6 @@ def view_materials(current_user):
     ]
     return render_template('view_materials.html', materials=materials, user=current_user)
 
-# @app.route('/my-results')
-# @token_required
-# @student_required
-# def my_results(current_user):
-#     # In a real app, you would fetch results from the database for this student
-#     results = [
-#         {'subject': 'Python Programming', 'score': 85, 'grade': 'A'},
-#         {'subject': 'Web Development', 'score': 92, 'grade': 'A+'},
-#         {'subject': 'Database Systems', 'score': 78, 'grade': 'B+'}
-#     ]
-#     return render_template('my_results.html', results=results, user=current_user)
-
 # Teacher-specific routes
 @app.route('/upload-materials', methods=['GET', 'POST'])
 @token_required
@@ -253,7 +256,6 @@ def upload_materials(current_user):
         return redirect(url_for('upload_materials'))
     
     return render_template('upload_materials.html', user=current_user)
-
 
 @app.route('/about')
 def about():
@@ -280,15 +282,7 @@ def upload_download(current_user):
 def not_found(error):
     return render_template('404.html'), 404
 
-# Initialize the database
-with app.app_context():
-    db.create_all()
-
-
-
 # Result system 
-
-
 @app.route('/manage-results')
 def manage_results():
     # Get years from directory structure
@@ -299,7 +293,6 @@ def manage_results():
     
     return render_template('result/manage_results.html', years=years)
 
-
 @app.route('/my-results')
 def my_results():
     # Get years from directory structure
@@ -309,9 +302,6 @@ def my_results():
                 if os.path.isdir(os.path.join(app.config['UPLOAD_FOLDER'], name))]
     
     return render_template('result/my_results.html', years=years)
-
-
-
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -451,8 +441,192 @@ def preview_file(filepath):
     flash('Preview not available for this file type')
     return redirect(url_for('browse_results', year=directory))
 
+# Events System
+@app.route('/events')
+def events_home():
+    conn = sqlite3.connect('events.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM events ORDER BY event_date ASC')
+    events = cursor.fetchall()
+    conn.close()
+    return render_template('Events/Event_index.html', events=events)
 
-# 
+@app.route('/event/<int:event_id>')
+def event_detail(event_id):
+    conn = sqlite3.connect('events.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM events WHERE id = ?', (event_id,))
+    event = cursor.fetchone()
+    conn.close()
+    if event:
+        return render_template('Events/event_detail.html', event=event)
+    flash('Event not found!', 'danger')
+    return redirect(url_for('Events/index.html'))
+
+@app.route('/upload_event', methods=['GET', 'POST'])
+@token_required
+@teacher_required
+def upload_event(current_user):
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        event_date = request.form.get('event_date')
+        event_time = request.form.get('event_time')
+        
+        # Form validation
+        if not title or not description or not event_date or not event_time:
+            flash('All fields except image are required!', 'danger')
+            return redirect(url_for('upload_event'))
+        
+        image_path = None
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and file.filename != '' and allowed_event_file(file.filename):
+                filename = secure_filename(file.filename)
+                # Add timestamp to prevent filename conflicts
+                filename = f"{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+                file_path = os.path.join(app.config['EVENT_UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                image_path = os.path.join('uploads_event', filename)
+        
+        # Database connection moved outside the image check
+        conn = sqlite3.connect('events.db')
+        cursor = conn.cursor()
+        cursor.execute(
+            'INSERT INTO events (title, description, image_path, event_date, event_time) VALUES (?, ?, ?, ?, ?)',
+            (title, description, image_path, event_date, event_time)
+        )
+        conn.commit()
+        conn.close()
+        
+        flash('Event uploaded successfully!', 'success')
+        return redirect(url_for('events_home'))  # Not 'Events/index.html'
+    
+    return render_template('Events/upload.html', user=current_user)
+
+@app.route('/manage_events')
+@token_required
+@teacher_required
+def manage_events(current_user):
+    conn = sqlite3.connect('events.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM events ORDER BY event_date DESC')
+    events = cursor.fetchall()
+    conn.close()
+    return render_template('Events/manage.html', events=events, user=current_user)
+
+@app.route('/delete_event/<int:event_id>', methods=['POST'])
+@token_required
+@teacher_required
+def delete_event(current_user, event_id):
+    conn = sqlite3.connect('events.db')
+    cursor = conn.cursor()
+    
+    # Get the image path before deleting
+    cursor.execute('SELECT image_path FROM events WHERE id = ?', (event_id,))
+    event = cursor.fetchone()
+    
+    if event and event[0]:
+        # Delete the image file if it exists
+        try:
+            image_path = os.path.join('static', event[0])
+            if os.path.exists(image_path):
+                os.remove(image_path)
+        except Exception as e:
+            flash(f'Error removing image: {str(e)}', 'warning')
+    
+    # Delete the event from database
+    cursor.execute('DELETE FROM events WHERE id = ?', (event_id,))
+    conn.commit()
+    conn.close()
+    
+    flash('Event deleted successfully!', 'success')
+    return redirect(url_for('manage_events'))
+
+@app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
+@token_required
+@teacher_required
+def edit_event(current_user, event_id):
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        event_date = request.form.get('event_date')
+        event_time = request.form.get('event_time')
+        
+        # Form validation
+        if not title or not description or not event_date or not event_time:
+            flash('All fields except image are required!', 'danger')
+            return redirect(url_for('edit_event', event_id=event_id))
+        
+        conn = sqlite3.connect('events.db')
+        cursor = conn.cursor()
+        
+        # Check if a new image was uploaded
+        if 'image' in request.files and request.files['image'].filename != '':
+            file = request.files['image']
+            if allowed_event_file(file.filename):
+                # Get the old image path
+                cursor.execute('SELECT image_path FROM events WHERE id = ?', (event_id,))
+                old_image_path = cursor.fetchone()[0]
+                
+                # Delete the old image if it exists
+                if old_image_path:
+                    try:
+                        full_path = os.path.join('static', old_image_path)
+                        if os.path.exists(full_path):
+                            os.remove(full_path)
+                    except Exception as e:
+                        flash(f'Error removing old image: {str(e)}', 'warning')
+                
+                # Save the new image
+                filename = secure_filename(file.filename)
+                filename = f"{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+                file_path = os.path.join(app.config['EVENT_UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                image_path = os.path.join('uploads_event', filename)
+                
+                # Update with new image
+                cursor.execute(
+                    'UPDATE events SET title = ?, description = ?, image_path = ?, event_date = ?, event_time = ? WHERE id = ?',
+                    (title, description, image_path, event_date, event_time, event_id)
+                )
+            else:
+                flash('Invalid image format!', 'danger')
+                return redirect(url_for('edit_event', event_id=event_id))
+        else:
+            # Update without changing the image
+            cursor.execute(
+                'UPDATE events SET title = ?, description = ?, event_date = ?, event_time = ? WHERE id = ?',
+                (title, description, event_date, event_time, event_id)
+            )
+        
+        conn.commit()
+        conn.close()
+        
+        flash('Event updated successfully!', 'success')
+        return redirect(url_for('manage_events'))
+    
+    # GET request - show the edit form
+    conn = sqlite3.connect('events.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM events WHERE id = ?', (event_id,))
+    event = cursor.fetchone()
+    conn.close()
+    
+    if not event:
+        flash('Event not found!', 'danger')
+        return redirect(url_for('manage_events'))
+    
+    return render_template('Events/edit.html', event=event, user=current_user)
+
+# Initialize the databases
+with app.app_context():
+    db.create_all()
+    init_events_db()
 
 if __name__ == '__main__':
     app.run(debug=True)

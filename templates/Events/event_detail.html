@@ -1,0 +1,58 @@
+{% extends 'Events/base.html' %} {% block title %}{{ event.title }}{% endblock
+%} {% block content %}
+<div class="row">
+  <div class="col-md-10 offset-md-1">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{{ url_for('events_home') }}">Home</a>
+        </li>
+        <li class="breadcrumb-item active">Event Details</li>
+      </ol>
+    </nav>
+
+    <div class="card mb-4">
+      <div class="row g-0">
+        <div class="col-md-4">
+          {% if event.image_path %}
+          <img
+            src="{{ url_for('static', filename=event.image_path) }}"
+            class="img-fluid rounded-start event-detail-img"
+            alt="{{ event.title }}"
+          />
+          {% else %}
+          <img
+            src="{{ url_for('static', filename='img/default-event.jpg') }}"
+            class="img-fluid rounded-start event-detail-img"
+            alt="Default Event Image"
+          />
+          {% endif %}
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h1 class="card-title">{{ event.title }}</h1>
+            <div class="event-meta mb-3">
+              <span class="badge bg-primary me-2">
+                <i class="bi bi-calendar"></i> {{ event.event_date }}
+              </span>
+              <span class="badge bg-secondary">
+                <i class="bi bi-clock"></i> {{ event.event_time }}
+              </span>
+            </div>
+            <div class="card-text event-description">
+              <h4>Description</h4>
+              <p>{{ event.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mb-5">
+      <a href="{{ url_for('events_home') }}" class="btn btn-primary"
+        >Back to Events</a
+      >
+    </div>
+  </div>
+</div>
+{% endblock %}

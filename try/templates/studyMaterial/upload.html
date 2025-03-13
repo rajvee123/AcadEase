@@ -1,0 +1,84 @@
+{% extends 'studyMaterial/base.html' %} {% block title %}Upload Material - Study
+Material Management System{% endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Upload Study Material</h4>
+      </div>
+      <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              name="title"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+              class="form-control"
+              id="description"
+              name="description"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="subject" class="form-label">Subject</label>
+            <input
+              type="text"
+              class="form-control"
+              id="subject"
+              name="subject"
+              placeholder="Enter subject name"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="semester" class="form-label">Semester</label>
+            <input
+              type="text"
+              class="form-control"
+              id="semester"
+              name="semester"
+              placeholder="e.g. Fall 2024"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="file_type" class="form-label">Material Type</label>
+            <select
+              class="form-select"
+              id="file_type"
+              name="file_type"
+              required
+            >
+              <option value="">Select Type</option>
+              <option value="Notes">Notes</option>
+              <option value="PDF">PDF</option>
+              <option value="PPT">Presentation</option>
+              <option value="Past Paper">Past Paper</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="file" class="form-label">File</label>
+            <input
+              class="form-control"
+              type="file"
+              id="file"
+              name="file"
+              required
+            />
+            <small class="form-text text-muted">Maximum file size: 16MB</small>
+          </div>
+          <button type="submit" class="btn btn-primary">Upload Material</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

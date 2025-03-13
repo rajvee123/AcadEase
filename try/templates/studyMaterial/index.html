@@ -1,0 +1,73 @@
+<!-- index.html -->
+{% extends 'studyMaterial/base.html' %} {% block content %}
+<div class="jumbotron bg-light p-5 rounded">
+  <h1 class="display-4">Welcome to StudyHub</h1>
+  <p class="lead">Your one-stop solution for academic resources management.</p>
+  <hr class="my-4" />
+  <p>
+    Browse, upload, and manage study materials organized by subject, semester,
+    and type.
+  </p>
+  <a class="btn btn-primary btn-lg" href="{{ url_for('browse_materials') }}"
+    >Browse Materials</a
+  >
+  {% if current_user.is_authenticated %}
+  <a class="btn btn-success btn-lg ms-2" href="{{ url_for('upload_material') }}"
+    >Upload Material</a
+  >
+  {% else %}
+  <a class="btn btn-outline-primary btn-lg ms-2" href="{{ url_for('login') }}"
+    >Login to Upload</a
+  >
+  {% endif %}
+</div>
+
+<div class="row mt-5">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Subject Categories</h5>
+      </div>
+      <div class="card-body">
+        <div class="list-group">
+          {% for subject in subjects %}
+          <a
+            href="{{ url_for('browse_materials', subject=subject.id) }}"
+            class="list-group-item list-group-item-action"
+          >
+            {{ subject.name }} ({{ subject.code }})
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Recent Uploads</h5>
+      </div>
+      <div class="card-body">
+        <div class="list-group">
+          {% for material in recent_materials %}
+          <a
+            href="{{ url_for('download_material', material_id=material.id) }}"
+            class="list-group-item list-group-item-action"
+          >
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">{{ material.title }}</h6>
+              <small>{{ material.upload_date.strftime('%d %b %Y') }}</small>
+            </div>
+            <p class="mb-1">
+              {{ material.subject.name }} - {{ material.semester }}
+            </p>
+            <small class="text-muted">{{ material.file_type }}</small>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

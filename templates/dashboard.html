@@ -56,9 +56,7 @@
             </li>
             {% endif %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('upload_download') }}"
-                >Files</a
-              >
+              <a class="nav-link" href="{{ url_for('events_home') }}">Events</a>
             </li>
           </ul>
           <ul class="navbar-nav">
@@ -146,9 +144,9 @@
                   <div class="card text-white bg-info">
                     <div class="card-body text-center">
                       <i class="bi bi-file-earmark-arrow-down fs-1"></i>
-                      <h5 class="card-title mt-2">Files</h5>
+                      <h5 class="card-title mt-2">Explore Events</h5>
                       <a
-                        href="{{ url_for('upload_download') }}"
+                        href="{{ url_for('events_home') }}"
                         class="btn btn-outline-light btn-sm mt-2"
                         >Access</a
                       >
@@ -186,9 +184,9 @@
                   <div class="card text-white bg-info">
                     <div class="card-body text-center">
                       <i class="bi bi-file-earmark-arrow-up fs-1"></i>
-                      <h5 class="card-title mt-2">Files</h5>
+                      <h5 class="card-title mt-2">Upload Events</h5>
                       <a
-                        href="{{ url_for('upload_download') }}"
+                        href="{{ url_for('events_home') }}"
                         class="btn btn-outline-light btn-sm mt-2"
                         >Access</a
                       >
