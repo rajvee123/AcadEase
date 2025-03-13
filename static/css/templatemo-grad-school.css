@@ -1604,3 +1604,55 @@ footer p a:hover {
 .loginColor {
   background-color: #f5a425
 }
+
+/* General Card Styling */
+.transport-card {
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6); /* Bluish shade */
+  color: white;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.transport-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Animation Keyframes */
+@keyframes moveBus {
+  0% { background-position: -100px 0; }
+  100% { background-position: 100px 0; }
+}
+
+@keyframes moveTrain {
+  0% { background-position: -100px 0; }
+  100% { background-position: 100px 0; }
+}
+
+@keyframes movePlane {
+  0% { background-position: -100px 0; }
+  100% { background-position: 100px 0; }
+}
+
+/* Hover Animations */
+.bus:hover {
+  background-image: url('https://cdn-icons-png.flaticon.com/128/2554/2554951.png');
+  background-repeat: no-repeat;
+  background-position: 0px 10px;
+  animation: moveBus 1.5s linear infinite;
+}
+
+.train:hover {
+  background-image: url('https://cdn-icons-png.flaticon.com/128/3055/3055232.png');
+  background-repeat: no-repeat;
+  background-position: 0px 10px;
+  animation: moveTrain 1.5s linear infinite;
+}
+
+.plane:hover {
+  background-image: url('https://cdn-icons-png.flaticon.com/128/2621/2621064.png');
+  background-repeat: no-repeat;
+  background-position: 0px 10px;
+  animation: movePlane 1.5s linear infinite;
+}

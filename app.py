@@ -129,7 +129,7 @@ def login():
         
         if not user:
             flash('User not found', 'danger')
-            return render_template('login.html')
+            return render_template('auth/login.html')
         
         if check_password_hash(user.password, password):
             # Generate JWT token
