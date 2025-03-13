@@ -165,8 +165,7 @@ a.menu-link { display: none; }
 }
 
 .main-header {
-    /* background-color: rgba(22,34,57,0.95); */
-    background-color: ;
+    background-color: rgba(22,34,57,0.95);
     height: 80px;
     position: fixed;
     z-index: 12;
@@ -1592,4 +1591,16 @@ footer p a:hover {
     font-weight: 600;
     letter-spacing: 0.25px;
   }
+}
+
+
+/* for the login page bg;
+*/
+
+.custom-bg {
+  background: linear-gradient(to right, #031028, #0f1520); /* Blue gradient */
+}
+
+.loginColor {
+  background-color: #f5a425
 }

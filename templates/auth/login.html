@@ -9,13 +9,48 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+
+    <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="/static/css/fontawesome.css">
+    <link rel="stylesheet" href="/static/css/templatemo-grad-school.css">
+    <link rel="stylesheet" href="/static/css/owl.css">
+    <link rel="stylesheet" href="/static/css/lightbox.css">
   </head>
-  <body>
-    <div class="container mt-5">
-      <div class="row justify-content-center">
+  <body class="custom-bg">
+
+    <header class="main-header clearfix" role="header">
+    
+      <div class="logo">
+        <a href="/">
+          <a href="/login"><em>Acad</em>Ease</a>
+        </a>
+      </div>
+  
+      <a href="/" class="menu-link"><i class="fa fa-bars"></i></a>
+      <nav id="menu" class="main-nav" role="navigation">
+        <ul class="main-menu">
+          <li><a href="/">Home</a></li>
+          <li class="has-submenu"><a href="#section2">Explore</a>
+            <ul class="sub-menu">
+              <li><a href="#section2">Resourses</a></li>
+              <li><a href="#section3">Forum</a></li>
+              <li><a href="#section3">Result</a></li>
+            </ul>
+          </li>
+          <li><a href="#section4">Courses</a></li>
+          <!-- <li><a href="#section5">Video</a></li> -->
+          <li><a href="/login">Contact</a></li>
+          </ul>
+      </nav>
+    </header>
+
+    <div class="container d-flex align-items-center justify-content-center min-vh-100 ">
+      <div class="row justify-content-center w-100">
         <div class="col-md-6">
-          <div class="card shadow">
-            <div class="card-header bg-primary text-white">
+          <div class="card shadow mt-10">
+            <div class="loginColor card-header text-white mt-10">
               <h3 class="mb-0">Login</h3>
             </div>
             <div class="card-body">
@@ -46,7 +81,7 @@
                   />
                 </div>
                 <div class="d-grid gap-2">
-                  <button type="submit" class="btn btn-primary">Login</button>
+                  <button type="submit" class="btn btn-primary loginColor">Login</button>
                 </div>
               </form>
 
